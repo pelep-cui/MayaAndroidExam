@@ -44,6 +44,10 @@ android {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
 }
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}
 
 dependencies {
 

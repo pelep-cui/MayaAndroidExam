@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">MayaAndroidExam</string>
     <string name="content_desc_app_icon">App Icon</string>
+    <string name="label_common_username">username</string>
+    <string name="label_common_password">password</string>
+    <string name="error_invalid_password">Invalid username/password</string>
+    <string name="content_desc_hide_password">hide password</string>
+    <string name="content_desc_show_password">show password</string>
+    <string name="button_label_signin">sign in</string>
+    <string name="button_label_send">send</string>
+    <string name="button_label_view">view transactions</string>
+    <string name="label_common_amount">amount</string>
+    <string name="button_label_submit">submit</string>
+    <string name="content_message_success">Money was successfully sent.</string>
+    <string name="content_message_failure">Unable to send money. Please try again.</string>
+    <string name="content_desc_check">Success Icon</string>
+    <string name="content_desc_error">error icon</string>
 </resources>

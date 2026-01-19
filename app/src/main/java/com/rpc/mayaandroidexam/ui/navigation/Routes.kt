@@ -4,13 +4,12 @@ object Routes {
     object Auth {
         const val Route = "Auth"
         const val Login = "Auth.Login"
-        const val Splash = "Auth.Splash"
     }
 
     object Main {
         const val Route = "Main"
-        const val Setup = "Main.Setup"
-        const val Users = "Main.Users"
         const val Home = "Main.Home"
+        const val Send = "Main.Send"
+        const val History = "Main.History"
     }
 }
