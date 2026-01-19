@@ -1,2 +1,3 @@
 # MayaAndroidExam
-Technical exam source code.
+
+This project uses Android Gradle Plugin version 8.11.1
