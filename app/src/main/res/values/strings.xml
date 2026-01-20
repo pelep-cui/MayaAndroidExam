@@ -16,4 +16,6 @@
     <string name="content_desc_check">Success Icon</string>
     <string name="content_desc_error">error icon</string>
     <string name="label_header_transaction_history">Transaction History</string>
+    <string name="content_message_signing_in">Signing in. Please wait....</string>
+    <string name="content_description_exit">Exit</string>
 </resources>

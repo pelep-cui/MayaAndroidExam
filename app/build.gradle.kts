@@ -52,11 +52,11 @@ kapt {
 dependencies {
 
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.runtime)
     kapt(libs.androidx.hilt.compiler)
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.android.compiler)
     annotationProcessor(libs.androidx.hilt.compiler)
-
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.common)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -70,6 +70,14 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.materialIcon)
     implementation(libs.navigation.compose)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    // For Kotlin Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
