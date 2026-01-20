@@ -32,7 +32,9 @@ fun App() {
                 }
             }
             composable(Routes.Main.Send) {
-                SendMoneyScreen()
+                SendMoneyScreen { route ->
+                    handleNavigation(navController, route)
+                }
             }
             composable(Routes.Main.History) {
                 TransactionHistoryScreen()

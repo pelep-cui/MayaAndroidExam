@@ -18,4 +18,6 @@
     <string name="label_header_transaction_history">Transaction History</string>
     <string name="content_message_signing_in">Signing in. Please wait....</string>
     <string name="content_description_exit">Exit</string>
+    <string name="content_desc_balance_visibility">balance visibility icon</string>
+    <string name="common_label_wallet">wallet</string>
 </resources>
