@@ -32,6 +32,11 @@ class MayaAccountManager @Inject constructor(
         return sharedPreferences.getFloat(KEY_WALLET_BALANCE, 0f).toDouble()
     }
 
+    fun updateCurrentBalance(amount: Double) {
+        sharedPreferences.edit(commit = true) {
+            putFloat(KEY_WALLET_BALANCE, amount.toFloat())
+        }
+    }
     fun clear() {
         sharedPreferences
             .edit(commit = true) {

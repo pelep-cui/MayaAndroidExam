@@ -12,15 +12,17 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.rpc.mayaandroidexam.R
 
 @Composable
-fun AppHeader(onBack: () -> Unit, onSignOut: () -> Unit) {
+fun AppHeader(title: String, onBack: () -> Unit, onSignOut: () -> Unit) {
     Row(
         modifier = Modifier
             .wrapContentHeight()
@@ -40,6 +42,16 @@ fun AppHeader(onBack: () -> Unit, onSignOut: () -> Unit) {
                 contentDescription = stringResource(R.string.content_description_exit)
             )
         }
+        Text(
+            text = title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .weight(1f),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         IconButton(onClick = {
             // Define the action to take when clicked
             onSignOut.invoke()

@@ -41,7 +41,6 @@ fun MainAppHeader(username: String, onSignOut: () -> Unit) {
             color = MaterialTheme.colorScheme.onBackground
         )
         IconButton(onClick = {
-            // Define the action to take when clicked
             onSignOut.invoke()
         }) {
             Icon(

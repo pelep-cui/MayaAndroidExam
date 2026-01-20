@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rpc.mayaandroidexam.R
+import com.rpc.mayaandroidexam.core.extensions.StringFormatter.toAmountFormat
 import com.rpc.mayaandroidexam.ui.components.MainAppHeader
 import com.rpc.mayaandroidexam.ui.navigation.Routes
 import com.rpc.mayaandroidexam.ui.theme.MayaAppTheme
@@ -100,7 +101,7 @@ fun WalletBalanceCard(state: HomeScreenState, onEvent: (HomeScreenEvent) -> Unit
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                var balance = String.format(locale = java.util.Locale.US, "%.2f", state.balance)
+                var balance = state.balance.toAmountFormat()
                 if (!balanceVisible) {
                     balance = "*".repeat(balance.length)
                 }

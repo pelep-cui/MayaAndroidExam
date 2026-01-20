@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,21 +36,35 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rpc.mayaandroidexam.R
+import com.rpc.mayaandroidexam.core.extensions.StringFormatter.toAmountFormat
 import com.rpc.mayaandroidexam.ui.components.AppHeader
+import com.rpc.mayaandroidexam.ui.components.LoadingDialog
 import com.rpc.mayaandroidexam.ui.navigation.Routes
 import com.rpc.mayaandroidexam.ui.theme.MayaAppTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SendMoneyScreen(navigateTo: (String) -> Unit = {}) {
+fun SendMoneyScreen(viewModel: SendMoneyViewModel = hiltViewModel(), navigateTo: (String) -> Unit = {}) {
+    val focusManager = LocalFocusManager.current
+
+    val navigationRoute by viewModel.navigationRoute.collectAsStateWithLifecycle("")
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(navigationRoute) {
+        navigateTo(navigationRoute)
+    }
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -59,8 +74,9 @@ fun SendMoneyScreen(navigateTo: (String) -> Unit = {}) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppHeader(
+            title = "Balance ${state.walletBalance}",
             onBack = { navigateTo(Routes.Main.Home) },
-            onSignOut = { }
+            onSignOut = { viewModel.onEvent(SendMoneyScreenEvent.SignOut) }
         )
         Column(
             modifier = Modifier
@@ -70,10 +86,13 @@ fun SendMoneyScreen(navigateTo: (String) -> Unit = {}) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             var amount by rememberSaveable { mutableStateOf("0.00") }
-            var showBottomSheet by rememberSaveable { mutableStateOf(false) }
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             val scope = rememberCoroutineScope()
 
+            if (state is SendMoneyScreenState.TransactionSuccessful) {
+                // Resets amount value after success transaction.
+                amount = "0.00"
+            }
             OutlinedTextField(
                 modifier = Modifier
                     .padding(top = 25.dp)
@@ -81,7 +100,13 @@ fun SendMoneyScreen(navigateTo: (String) -> Unit = {}) {
                 shape = RoundedCornerShape(8.dp),
                 value = amount,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                onValueChange = { newValue -> amount = newValue },
+                onValueChange = { newValue ->
+                    if (newValue.isEmpty()) {
+                        amount = "0.00"
+                    } else {
+                        amount = (newValue.toDoubleOrNull() ?: 0.0).toAmountFormat()
+                    }
+                },
                 isError = false,
                 maxLines = 1,
                 supportingText = { },
@@ -94,12 +119,18 @@ fun SendMoneyScreen(navigateTo: (String) -> Unit = {}) {
                     .height(56.dp)
                     .fillMaxWidth(0.8f),
                 shape = RoundedCornerShape(8.dp),
-                onClick = { showBottomSheet = !showBottomSheet }
+                onClick = {
+                    focusManager.clearFocus(true)
+                    viewModel.onEvent(SendMoneyScreenEvent.SendMoney(amount.toDoubleOrNull() ?: 0.0)) }
             ) {
                 Text(stringResource(R.string.button_label_submit).toUpperCase(Locale.current))
             }
 
-            if (showBottomSheet) {
+            if (state is SendMoneyScreenState.Loading) {
+                LoadingDialog(message = stringResource(R.string.content_message_sending_money))
+            }
+
+            if (state.showBottomSheet()) {
                 ModalBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -111,7 +142,7 @@ fun SendMoneyScreen(navigateTo: (String) -> Unit = {}) {
                     onDismissRequest = {
                         scope.launch { sheetState.hide() }.invokeOnCompletion {
                             if (!sheetState.isVisible) {
-                                showBottomSheet = false
+                                viewModel.onEvent(SendMoneyScreenEvent.DismissBottomSheet)
                             }
                         }
                     }
@@ -122,7 +153,11 @@ fun SendMoneyScreen(navigateTo: (String) -> Unit = {}) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        FailedModalContent()
+                        if (state.hasError()) {
+                            FailedModalContent(state)
+                        } else {
+                            SuccessfulModalContent()
+                        }
                     }
                 }
             }
@@ -143,14 +178,19 @@ fun SuccessfulModalContent() {
 }
 
 @Composable
-fun FailedModalContent() {
+fun FailedModalContent(state: SendMoneyScreenState) {
+    val message = when (state) {
+        is SendMoneyScreenState.InsufficientFunds -> stringResource(R.string.content_message_insufficient_funds)
+        is SendMoneyScreenState.TransactionFailed -> stringResource(R.string.content_message_transaction_failed)
+        else -> stringResource(R.string.content_message_failure)
+    }
     Icon(
         imageVector = Icons.Default.Error,
         contentDescription = stringResource(id = R.string.content_desc_error),
         tint = MaterialTheme.colorScheme.error,
         modifier = Modifier.padding(8.dp)
     )
-    Text(stringResource(R.string.content_message_failure),)
+    Text(message)
 }
 
 
