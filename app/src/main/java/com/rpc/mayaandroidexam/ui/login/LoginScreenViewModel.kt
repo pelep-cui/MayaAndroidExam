@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,13 +37,13 @@ class LoginScreenViewModel @Inject constructor(
     }
 
     private fun checkForExistingUsers() {
-        _loginScreenState.value = LoginScreenState.Initializing
         viewModelScope.launch(ioDispatcher) {
+            _loginScreenState.value = LoginScreenState.Initializing
             getExistingUserUseCase.getExistingUser().map { it != null }.collectLatest { hasUser ->
                 if (hasUser) {
                     _navigationRoute.emit(Routes.Main.Home)
                 } else {
-                    _loginScreenState.value = LoginScreenState.Idle
+                    _loginScreenState.update { LoginScreenState.Idle }
                 }
             }
         }
