@@ -131,10 +131,11 @@ fun LoginBox(state: LoginScreenState, onEvent: (LoginScreenEvent) -> Unit) {
         label = { Text(text = stringResource(R.string.label_common_password).toUpperCase(Locale.current)) },
         trailingIcon = @Composable {
             val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-            val description = if (passwordVisible)
+            val description = if (passwordVisible) {
                 stringResource(R.string.content_desc_hide_password)
-            else
+            } else {
                 stringResource(R.string.content_desc_show_password)
+            }
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                 Icon(image, contentDescription = description)
             }
