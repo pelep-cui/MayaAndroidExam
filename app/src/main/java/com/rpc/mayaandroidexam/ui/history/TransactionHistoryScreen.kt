@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,13 +18,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rpc.mayaandroidexam.R
+import com.rpc.mayaandroidexam.core.extensions.StringFormatter.toAmountFormat
+import com.rpc.mayaandroidexam.core.extensions.StringFormatter.toDisplayFormat
+import com.rpc.mayaandroidexam.ui.components.AppHeader
+import com.rpc.mayaandroidexam.ui.navigation.Routes
 import com.rpc.mayaandroidexam.ui.theme.MayaAppTheme
 import java.time.OffsetDateTime
 
@@ -32,14 +41,27 @@ private val lists = listOf(
     Pair("Sent P 200.00", OffsetDateTime.now()),
 )
 @Composable
-fun TransactionHistoryScreen() {
+fun TransactionHistoryScreen(viewModel: HistoryScreenViewModel = hiltViewModel(), navigateTo: (String) -> Unit = {}) {
+    val navigationRoute by viewModel.navigationRoute.collectAsStateWithLifecycle("")
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(navigationRoute) {
+        navigateTo(navigationRoute)
+    }
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxHeight()
-            .imePadding(),
+            .imePadding()
+            .safeDrawingPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        AppHeader(
+            title = stringResource(R.string.label_header_transaction_history),
+            onBack = { navigateTo(Routes.Main.Home) },
+            onSignOut = {}
+        )
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -47,29 +69,18 @@ fun TransactionHistoryScreen() {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Text(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    text = stringResource(R.string.label_header_transaction_history),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onBackground
+            items(state.transactions) { transaction ->
+                HistoryItem(
+                    details = stringResource(R.string.item_history_summary, transaction.amount.toAmountFormat()),
+                    date = transaction.date
                 )
-            }
-
-            items(lists) { history ->
-                val (details, date) = history
-                HistoryItem(details, date)
             }
         }
     }
 }
 
 @Composable
-fun HistoryItem(details: String, date: OffsetDateTime) {
+fun HistoryItem(details: String, date: OffsetDateTime?) {
     Row(
         modifier = Modifier
             .wrapContentHeight()
@@ -96,7 +107,7 @@ fun HistoryItem(details: String, date: OffsetDateTime) {
             modifier = Modifier
                 .wrapContentHeight()
                 .wrapContentWidth(),
-            text = date.toLocalDate().toString(),
+            text = date.toDisplayFormat(),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
         )

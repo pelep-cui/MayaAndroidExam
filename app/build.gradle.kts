@@ -71,12 +71,17 @@ dependencies {
     implementation(libs.materialIcon)
     implementation(libs.navigation.compose)
 
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    // For Kotlin Coroutines
-    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    implementation(libs.kotlinx.coroutines.android)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

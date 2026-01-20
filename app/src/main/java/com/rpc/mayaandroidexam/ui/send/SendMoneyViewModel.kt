@@ -79,7 +79,7 @@ class SendMoneyViewModel @Inject constructor(
     }
 
     private fun signOut() {
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             signOutUseCase.signOut()
             _navigationRoute.emit(Routes.Auth.Login)
         }

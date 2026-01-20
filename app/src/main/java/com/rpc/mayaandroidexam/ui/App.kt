@@ -37,14 +37,15 @@ fun App() {
                 }
             }
             composable(Routes.Main.History) {
-                TransactionHistoryScreen()
+                TransactionHistoryScreen { route ->
+                    handleNavigation(navController, route)
+                }
             }
         }
     }
 }
 
 private fun handleNavigation(navController: NavController, route: String) {
-    println("OkHttp handleNavigation=$route")
     when (route) {
         Routes.Main.Route -> {
             navController.popBackStack()

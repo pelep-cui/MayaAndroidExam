@@ -22,5 +22,6 @@
     <string name="common_label_wallet">wallet</string>
     <string name="content_message_insufficient_funds">Sorry, insufficient funds.</string>
     <string name="content_message_transaction_failed">Transaction failed try again later.</string>
-    <string name="content_message_sending_money">Sending money, please wait...</string>
+    <string name="content_message_sending_money">Sending money, please wait....</string>
+    <string name="item_history_summary">Sent amount P %1$s</string>
 </resources>
